@@ -18,7 +18,7 @@ on:
 jobs:
   build:
     name: 编译 Lean ${{ github.event.inputs.CONFIG_FILE }} 固件
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     
     steps:
     - name: 拉取 Action 代码
