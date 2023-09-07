@@ -15,20 +15,20 @@ on:
         default: 'x86_64'
         type: choice
         options:
-          - 'jdy'
-          - 'x86_64'
-          - 'cr660x'
+          - 'JDY'
+          - 'X64'
+          - 'MiCR660X'
           
 #  schedule:
 #   - cron: 35 18 * * *
 
 jobs:
-  Build_X64:
-    name: 编译 X64架构 Lean 固件
+  build:
+    name: 编译 Lean ${{ github.event.inputs.CONFIG_FILE }} 固件
     runs-on: ubuntu-22.04
     
     steps:
-    - name: Checkout
+    - name: 拉取 Action 代码
       uses: actions/checkout@master
       
     - name: 初始化环境
@@ -55,7 +55,7 @@ jobs:
         echo src-git small https://github.com/kenzok8/small>>feeds.conf.default
         ./scripts/feeds update -a && ./scripts/feeds install -a
         
-    - name: 加载配置文件、自定义更改
+    - name: 加载配置文件、自定义配置
       env:
         CONFIG_FILE: '${{ github.event.inputs.CONFIG_FILE }}.config'
       run: |
