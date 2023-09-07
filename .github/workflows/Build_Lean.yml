@@ -1,4 +1,4 @@
-name: 编译lean固件
+name: 编译Lean固件
 on:
   workflow_dispatch:
     inputs:
