@@ -15,9 +15,9 @@ on:
         default: 'x86_64'
         type: choice
         options:
-          - 'JDY'
+          - 'jdy'
           - 'x86_64'
-          - 'cr6608'
+          - 'cr660x'
           
 #  schedule:
 #   - cron: 35 18 * * *
