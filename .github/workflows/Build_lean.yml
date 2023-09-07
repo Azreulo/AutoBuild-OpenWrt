@@ -23,7 +23,7 @@ on:
 #   - cron: 35 18 * * *
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     
     steps:
     - name: Checkout
@@ -39,7 +39,7 @@ jobs:
           /usr/share/dotnet \
           /etc/mysql \
           /etc/php
-        sudo -E apt -y purge \
+        sudo -E apt -qq purge \
           azure-cli \
           ghc* \
           zulu* \
@@ -61,7 +61,7 @@ jobs:
       env: 
         REPO_URL: https://github.com/coolsnowwolf/lede
       run: |
-        git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
+        git clone --depth 1 $REPO_URL -b ${{ github.event.inputs.REPO_BRANCH }} openwrt
         cd openwrt
         echo src-git kenzok8 https://github.com/kenzok8/openwrt-packages>>feeds.conf.default
         echo src-git small https://github.com/kenzok8/small>>feeds.conf.default
@@ -69,7 +69,7 @@ jobs:
         
     - name: 加载配置文件、自定义更改
       env:
-        CONFIG_FILE: '${{ github.event.inputs.CONFIG_FILE }}.config'
+        CONFIG_FILE: "${{ github.event.inputs.CONFIG_FILE }}.config"
       run: |
         [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
         chmod +x ./customize.sh && ./customize.sh
