@@ -22,8 +22,8 @@ on:
 #  schedule:
 #   - cron: 35 18 * * *
 jobs:
-  build: 启动"触发编译
-    runs-on: ubuntu-22.04
+  build:
+    runs-on: ubuntu-latest
     
     steps:
     - name: Checkout
