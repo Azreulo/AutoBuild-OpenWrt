@@ -13,7 +13,7 @@ on:
           - 'MiCR660X'
           
 #  schedule:
-#   - cron: 35 18 * * *
+#   - cron: 0 0 1 ? * FRI
 
 jobs:
   build:
@@ -80,14 +80,18 @@ jobs:
       uses: actions/upload-artifact@main
       with:
         name: OpenWrt
-        path: openwrt/bin/target/**/**/*.vmdk
+        path: openwrt/bin/target/*/*/*.vmdk
+
+    - name: 获取时间
+      id: date
+      run: echo "::set-output name=date::$(date +'%y%m%d')"
 
     - name: 发布到Release
       uses: ncipollo/release-action@main
       with:
-        name: ${{ github.event.inputs.CONFIG_FILE }}-$(date +"%y%m%d")
-        tag: $(date +"%y%m%d")
+        name: ${{ github.event.inputs.CONFIG_FILE }}-${{ steps.date.outputs.date }}
+        tag: ${{ steps.date.outputs.date }}
         token: ${{ secrets.OPENWRT_RELEASE }}
         allowUpdates: true
-        body: "Compile @$(date +'%y%m%d')"
-        artifacts: openwrt/bin/target/**/**/*.vmdk
+        body: "Compile @${{ steps.date.outputs.date }}"
+        artifacts: openwrt/bin/target/*/*/*.vmdk
