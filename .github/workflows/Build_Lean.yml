@@ -87,7 +87,7 @@ jobs:
       with:
         name: ${{ github.event.inputs.CONFIG_FILE }}-$(date +"%y%m%d")
         tag: $(date +"%y%m%d")
-        token: ${{ secrets.REPO_TOKEN }}
+        token: ${{ secrets.OPENWRT_RELEASE }}
         allowUpdates: true
         body: "Compile @$(date +'%y%m%d')"
         artifacts: openwrt/bin/target/**/**/*.vmdk
