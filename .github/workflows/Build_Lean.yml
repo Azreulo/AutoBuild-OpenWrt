@@ -24,7 +24,7 @@ jobs:
     - name: 拉取 Action 代码
       uses: actions/checkout@main
       
-    - name: 初始化环境
+    - name: 清理空间
       uses: jlumbroso/free-disk-space@main
       with:
         tool-cache: true
@@ -34,6 +34,8 @@ jobs:
         large-packages: true
         docker-images: true
         swap-storage: true
+        
+    - name: 初始化环境    
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
