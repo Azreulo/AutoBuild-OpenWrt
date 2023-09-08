@@ -25,18 +25,24 @@ jobs:
       uses: actions/checkout@v4.0.0
       
     - name: 初始化环境
+      uses: jlumbroso/free-disk-space@main
+      with:
+        tool-cache: true
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo timedatectl set-timezone "Asia/Shanghai"
         set +e
-        docker rmi `docker images -q`
-        sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox* google* dotnet* powershell openjdk* mysql* php*
-        sudo -E apt-get update
+        sudo -E apt-get update && sudo -E apt-get -y upgrade
         sudo -E apt-get -y install autoconf build-essential g++ gawk gcc gettext git libelf-dev libncurses5-dev libtinfo5 make patch python2 python3 qemu-utils time gcc-multilib g++-multilib p7zip-full python3-setuptools libfuse-dev ninja-build unzip file wget rsync subversion
         sudo -E apt-get -y autoremove --purge
         sudo -E apt-get clean
-        sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php
         
     - name: 克隆源代码、更新feeds
       env: 
@@ -79,8 +85,7 @@ jobs:
       with:
         name: ${{ github.event.inputs.CONFIG_FILE }}-$(date +"%y%m%d")
         tag: $(date +"%y%m%d")
-        token: ${{ secrets.OPENWRT_RELEASE }}
+        token: ${{ secrets.REPO_TOKEN }}
         allowUpdates: true
         body: "Compile @$(date +'%y%m%d')"
         artifacts: openwrt/bin/target/**/**/*.vmdk
-        
