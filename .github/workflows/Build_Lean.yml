@@ -80,7 +80,7 @@ jobs:
       uses: actions/upload-artifact@main
       with:
         name: OpenWrt
-        path: openwrt/bin/target/*/*/*.vmdk
+        path: openwrt/bin/target/**/*.vmdk
 
     - name: 获取时间
       id: date
@@ -93,5 +93,5 @@ jobs:
         tag: ${{ steps.date.outputs.date }}
         token: ${{ secrets.OPENWRT_RELEASE }}
         allowUpdates: true
-        body: "Compile @${{ steps.date.outputs.date }}"
-        artifacts: openwrt/bin/target/*/*/*.vmdk
+        body: "Compile done at ${{ steps.date.outputs.date }}"
+        artifacts: openwrt/bin/target
