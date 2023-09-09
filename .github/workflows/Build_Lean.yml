@@ -93,5 +93,5 @@ jobs:
         tag: ${{ steps.date.outputs.date }}
         token: ${{ secrets.OPENWRT_RELEASE }}
         allowUpdates: true
-        body: "Compile @${{ steps.date.outputs.date }}"
+        body: "Compiled at ${{ steps.date.outputs.date }}"
         artifacts: openwrt/bin/targets/*/*/*.vmdk
