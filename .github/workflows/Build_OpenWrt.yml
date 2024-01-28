@@ -1,9 +1,9 @@
-name: 编译Lean固件
+name: 编译 OpenWrt 固件
 on:
   workflow_dispatch:
     inputs:
-      CONFIG_FILE:
-        description: '请选择OpenWrt版本'
+      OPENWRT-MAINTAINER:
+        description: '请选择 OpenWrt 源码'
         required: true
         default: 'Lean'
         type: choice
@@ -11,6 +11,16 @@ on:
           - 'Lean'
           - 'ImmortalWrt'
           - 'Hanwckf'
+      BRANCH:
+        description: '请选择版本'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+          - 'main'
+          - '21.02'
+          - '23.05'
+      CONFIG_FILE:
         description: '请选择配置文件'
         required: true
         default: 'X64'
@@ -25,7 +35,7 @@ on:
 
 jobs:
   build:
-    name: 编译 Lean ${{ github.event.inputs.CONFIG_FILE }} 固件
+    name: 编译 ${{ github.event.inputs.CONFIG_FILE }} ${{ github.event.inputs.OPENWRT-MAINTAINER }} ${{ github.event.inputs.BRANCH }} 固件
     runs-on: ubuntu-latest
 
     steps:
@@ -59,8 +69,11 @@ jobs:
 
     - name: 克隆源代码、更新feeds
       env:
-        REPO_URL: https://github.com/coolsnowwolf/lede
+        OPENWRT-MAINTAINER: '${{ github.event.inputs.OPENWRT-MAINTAINER }}'
       run: |
+        if [[ ${{ github.event.inputs.OPENWRT-MAINTAINER }} == 'Lean' ]]; then
+          REPO_URL='https://github.com/coolsnowwolf/lede'
+        fi
         git clone --depth 1 $REPO_URL openwrt
         cd openwrt
         echo src-git kenzok8_small https://github.com/kenzok8/small>>feeds.conf.default #仅Passwall、SSR和Bypass
