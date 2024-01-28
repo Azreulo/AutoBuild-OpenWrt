@@ -83,11 +83,11 @@ jobs:
       id: date
       run: echo "date=$(date +%F)" >> $GITHUB_OUTPUT
 
-    - name : 上传固件
-      uses: actions/upload-artifact@main
-      with:
-        name: OpenWrt
-        path: openwrt/bin/targets/**/**/*.{vmdk,ubi,bin}
+#    - name : 上传固件
+#      uses: actions/upload-artifact@main
+#      with:
+#        name: OpenWrt
+#        path: openwrt/bin/targets/**/**/*.{vmdk,ubi,bin}
 
     - name: 发布到Release
       uses: ncipollo/release-action@main
