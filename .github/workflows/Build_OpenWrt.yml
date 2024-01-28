@@ -1,0 +1,108 @@
+name: 编译Lean固件
+on:
+  workflow_dispatch:
+    inputs:
+      CONFIG_FILE:
+        description: '请选择OpenWrt版本'
+        required: true
+        default: 'Lean'
+        type: choice
+        options:
+          - 'Lean'
+          - 'ImmortalWrt'
+          - 'Hanwckf'
+        description: '请选择配置文件'
+        required: true
+        default: 'X64'
+        type: choice
+        options:
+          - 'JDY'
+          - 'X64'
+          - 'MiCR660X'
+
+#  schedule:
+#   - cron: 0 0 1 ? * FRI
+
+jobs:
+  build:
+    name: 编译 Lean ${{ github.event.inputs.CONFIG_FILE }} 固件
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 拉取 Action 代码
+      uses: actions/checkout@main
+
+    - name: 清理空间
+      uses: jlumbroso/free-disk-space@main
+      with:
+        tool-cache: true
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        docker-images: true
+        swap-storage: true
+
+    - name: 初始化环境
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo timedatectl set-timezone "Asia/Shanghai"
+        set +e
+        #docker rmi `docker images -q`
+        #sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox* google* dotnet* powershell openjdk* mysql* php*
+        sudo -E apt-get update
+        sudo -E apt-get -y install autoconf build-essential g++ gawk gcc gettext git libelf-dev libncurses5-dev libtinfo5 make patch python2 python3 qemu-utils time gcc-multilib g++-multilib p7zip-full python3-setuptools libfuse-dev ninja-build unzip file wget rsync subversion
+        sudo -E apt-get -y autoremove --purge
+        sudo -E apt-get clean
+        #sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php
+
+    - name: 克隆源代码、更新feeds
+      env:
+        REPO_URL: https://github.com/coolsnowwolf/lede
+      run: |
+        git clone --depth 1 $REPO_URL openwrt
+        cd openwrt
+        echo src-git kenzok8_small https://github.com/kenzok8/small>>feeds.conf.default #仅Passwall、SSR和Bypass
+        echo src-git kenzok8_package https://github.com/kenzok8/openwrt-packages>>feeds.conf.default #Kenzok8定义仓库
+        ./scripts/feeds update -a -f && ./scripts/feeds install -a -f
+        cp ../customize.sh . && sh customize.sh
+        
+    - name: 加载配置文件、自定义配置
+      env:
+        CONFIG_FILE: '${{ github.event.inputs.CONFIG_FILE }}.config'
+      run: |
+        [ -e $CONFIG_FILE ] && mv Config/$CONFIG_FILE openwrt/.config
+        cd openwrt && make defconfig
+
+    - name: 预下载依赖
+      working-directory: ./openwrt
+      run: |
+        make download -j$(nproc) V=S
+        find dl -size -1024c -exec ls -l {} \;
+        find dl -size -1024c -exec rm -f {} \;
+
+    - name: 编译固件
+      working-directory: ./openwrt
+      run: |
+        make -j$(nproc) V=S || make -j1 V=s
+
+    - name: 获取时间
+      id: date
+      run: echo "date=$(date +%F)" >> $GITHUB_OUTPUT
+
+    - name : 上传固件
+      uses: actions/upload-artifact@main
+      with:
+        name: OpenWrt
+        path: openwrt/bin/targets/*/*/*.{vmdk,ubi,bin}
+
+    - name: 发布到Release
+      uses: ncipollo/release-action@main
+      with:
+        name: ${{ github.event.inputs.CONFIG_FILE }}-${{ steps.date.outputs.date }}
+        tag: ${{ steps.date.outputs.date }}
+        token: ${{ secrets.OPENWRT_RELEASE }}
+        allowUpdates: true
+        body: "Compiled at ${{ steps.date.outputs.date }}"
+        artifacts: openwrt/bin/targets/*/*/*.{vmdk,ubi,bin}
