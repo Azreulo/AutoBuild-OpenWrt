@@ -87,7 +87,7 @@ jobs:
       uses: actions/upload-artifact@main
       with:
         name: OpenWrt
-        path: openwrt/bin/targets/*/*/*.vmdk
+        path: openwrt/bin/targets/*/*/*.{vmdk,ubi,bin}
 
     - name: 发布到Release
       uses: ncipollo/release-action@main
@@ -97,4 +97,4 @@ jobs:
         token: ${{ secrets.OPENWRT_RELEASE }}
         allowUpdates: true
         body: "Compiled at ${{ steps.date.outputs.date }}"
-        artifacts: openwrt/bin/targets/*/*/*.vmdk
+        artifacts: openwrt/bin/targets/*/*/*.{vmdk,ubi,bin}
