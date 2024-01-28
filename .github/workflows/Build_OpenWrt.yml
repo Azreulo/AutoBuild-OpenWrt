@@ -2,24 +2,15 @@ name: 编译 OpenWrt 固件
 on:
   workflow_dispatch:
     inputs:
-      OPENWRT-MAINTAINER:
+      REPO:
         description: '请选择 OpenWrt 源码'
         required: true
         default: 'Lean'
         type: choice
         options:
-          - 'Lean'
-          - 'ImmortalWrt'
           - 'Hanwckf'
-      BRANCH:
-        description: '请选择版本'
-        required: true
-        default: 'main'
-        type: choice
-        options:
-          - 'main'
-          - '21.02'
-          - '23.05'
+          - 'ImmortalWrt'
+          - 'Lean'
       CONFIG_FILE:
         description: '请选择配置文件'
         required: true
@@ -27,15 +18,15 @@ on:
         type: choice
         options:
           - 'JDY'
-          - 'X64'
           - 'MiCR660X'
+          - 'X64'
 
 #  schedule:
 #   - cron: 0 0 1 ? * FRI
 
 jobs:
   build:
-    name: 编译 ${{ github.event.inputs.CONFIG_FILE }} ${{ github.event.inputs.OPENWRT-MAINTAINER }} ${{ github.event.inputs.BRANCH }} 固件
+    name: 编译 ${{ github.event.inputs.REPO }} 源码 ${{ github.event.inputs.CONFIG_FILE }} 固件
     runs-on: ubuntu-latest
 
     steps:
@@ -68,22 +59,26 @@ jobs:
         #sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php
 
     - name: 克隆源代码、更新feeds
-      env:
-        OPENWRT-MAINTAINER: '${{ github.event.inputs.OPENWRT-MAINTAINER }}'
-      run: |
-        if [[ ${{ github.event.inputs.OPENWRT-MAINTAINER }} == 'Lean' ]]; then
+            run: |
+        if [[ ${{ github.event.inputs.OPENWRT-MAINTAINER }} == 'Hanwckf' ]]; then
+          REPO_URL='https://github.com/hanwckf/immortalwrt-mt798x'
+          BRANCH='21.02'
+        elif [[ ${{ github.event.inputs.OPENWRT-MAINTAINER }} == 'ImmortalWrt' ]]; then
+          REPO_URL='https://github.com/immortalwrt/immortalwrt'
+          BRANCH='23.05'
+        elif [[ ${{ github.event.inputs.OPENWRT-MAINTAINER }} == 'Lean' ]]; then
           REPO_URL='https://github.com/coolsnowwolf/lede'
+          BRANCH='main'
         fi
-        git clone --depth 1 $REPO_URL openwrt
+        git clone -b $BRANCH --single-branch --depth 1 $REPO_URL openwrt
         cd openwrt
         echo src-git kenzok8_small https://github.com/kenzok8/small>>feeds.conf.default #仅Passwall、SSR和Bypass
         echo src-git kenzok8_package https://github.com/kenzok8/openwrt-packages>>feeds.conf.default #Kenzok8定义仓库
         ./scripts/feeds update -a -f && ./scripts/feeds install -a -f
-        cp ../customize.sh . && sh customize.sh
         
     - name: 加载配置文件、自定义配置
       env:
-        CONFIG_FILE: '${{ github.event.inputs.CONFIG_FILE }}.config'
+        CONFIG_FILE: '${{ github.event.inputs.CONFIG_FILE }}.${{ github.event.inputs.REPO }}.config'
       run: |
         [ -e $CONFIG_FILE ] && mv Config/$CONFIG_FILE openwrt/.config
         cd openwrt && make defconfig
@@ -104,11 +99,11 @@ jobs:
       id: date
       run: echo "date=$(date +%F)" >> $GITHUB_OUTPUT
 
-    - name : 上传固件
-      uses: actions/upload-artifact@main
-      with:
-        name: OpenWrt
-        path: openwrt/bin/targets/*/*/*.{vmdk,ubi,bin}
+ #   - name : 上传固件
+ #     uses: actions/upload-artifact@main
+ #     with:
+ #       name: OpenWrt
+ #       path: openwrt/bin/targets/**/**/*.{vmdk,ubi,bin}
 
     - name: 发布到Release
       uses: ncipollo/release-action@main
@@ -118,4 +113,10 @@ jobs:
         token: ${{ secrets.OPENWRT_RELEASE }}
         allowUpdates: true
         body: "Compiled at ${{ steps.date.outputs.date }}"
-        artifacts: openwrt/bin/targets/*/*/*.{vmdk,ubi,bin}
+        artifacts: openwrt/bin/targets/**/**/*.{vmdk,ubi,bin}
+
+    - name: 删除过期工作流
+      uses: Mattraks/delete-workflow-runs@main
+      with:
+        retain_days: 0
+        keep_minimum_runs: 1
