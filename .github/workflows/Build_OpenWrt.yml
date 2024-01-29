@@ -59,14 +59,16 @@ jobs:
         #sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php
 
     - name: 克隆源代码、更新feeds
+      env:
+        REPO : ${{ github.event.inputs.REPO }}
       run: |
-        if [[ ${{ github.event.inputs.REPO }} == 'Hanwckf' ]]; then
+        if [[ $REPO == 'Hanwckf' ]]; then
           REPO_URL='https://github.com/hanwckf/immortalwrt-mt798x'
           BRANCH='21.02'
-        elif [[ ${{ github.event.inputs.REPO }} == 'ImmortalWrt' ]]; then
+        elif [[ $REPO == 'ImmortalWrt' ]]; then
           REPO_URL='https://github.com/immortalwrt/immortalwrt'
           BRANCH='23.05'
-        elif [[ ${{ github.event.inputs.REPO }} == 'Lean' ]]; then
+        elif [[ $REPO == 'Lean' ]]; then
           REPO_URL='https://github.com/coolsnowwolf/lede'
           BRANCH='main'
         fi
