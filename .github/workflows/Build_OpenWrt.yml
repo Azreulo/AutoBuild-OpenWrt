@@ -81,8 +81,8 @@ jobs:
       run: |
         set +e
         [ -e $CONFIG_FILE ] && cp Config/$CONFIG_FILE openwrt/.config
-        cp customize.sh openwrt/
-        cd openwrt && sh customize.sh && make defconfig
+        cp customize.sh openwrt/ && chmod +x openwrt/customize.sh
+        cd openwrt && ./customize.sh && make defconfig
 
     - name: 预下载依赖
       working-directory: ./openwrt
