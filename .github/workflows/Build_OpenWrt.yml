@@ -70,6 +70,7 @@ jobs:
           REPO_URL='https://github.com/coolsnowwolf/lede'
           BRANCH='main'
         fi
+        set +e
         git clone -b $BRANCH --single-branch --depth 1 $REPO_URL openwrt     
         cd openwrt
         echo src-git kenzok8_small https://github.com/kenzok8/small>>feeds.conf.default #仅Passwall、SSR和Bypass
