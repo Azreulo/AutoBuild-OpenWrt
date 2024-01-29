@@ -62,13 +62,13 @@ jobs:
       #env:
         #REPO : ${{ github.event.inputs.REPO }}
       run: |
-        if [ ${{ github.event.inputs.REPO }} == 'Hanwckf' ]; then
+        if [[ ${{ github.event.inputs.REPO }} == 'Hanwckf' ]]; then
           REPO_URL='https://github.com/hanwckf/immortalwrt-mt798x'
-          BRANCH='21.02'
-        elif [ ${{ github.event.inputs.REPO }} == 'ImmortalWrt' ]; then
+          BRANCH='openwrt-21.02'
+        elif [[ ${{ github.event.inputs.REPO }} == 'ImmortalWrt' ]]; then
           REPO_URL='https://github.com/immortalwrt/immortalwrt'
-          BRANCH='23.05'
-        elif [ ${{ github.event.inputs.REPO }} == 'Lean' ]; then
+          BRANCH='openwrt-23.05'
+        elif [[ ${{ github.event.inputs.REPO }} == 'Lean' ]]; then
           REPO_URL='https://github.com/coolsnowwolf/lede'
           BRANCH='main'
         fi
