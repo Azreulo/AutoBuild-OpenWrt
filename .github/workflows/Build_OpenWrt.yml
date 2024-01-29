@@ -82,9 +82,8 @@ jobs:
       env:
         CONFIG_FILE: '${{ github.event.inputs.CONFIG_FILE }}.${{ github.event.inputs.REPO }}.config'
       run: |
-        [ -e $CONFIG_FILE ] && mv Config/$CONFIG_FILE openwrt/.config
-        cp ../customize.sh . && bash customize.sh
-        cd openwrt && make defconfig
+        [ -e $CONFIG_FILE ] && mv Config/$CONFIG_FILE openwrt/.config && mv customize.sh openwrt/customize.sh
+        cd openwrt && bash customize.sh && make defconfig
 
     - name: 预下载依赖
       working-directory: ./openwrt
