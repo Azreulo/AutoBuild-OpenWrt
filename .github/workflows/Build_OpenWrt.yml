@@ -49,6 +49,7 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo timedatectl set-timezone "Asia/Shanghai"
+        set +e
         #docker rmi `docker images -q`
         #sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox* google* dotnet* powershell openjdk* mysql* php*
         sudo -E apt-get update
@@ -68,8 +69,6 @@ jobs:
         elif [[ ${{ github.event.inputs.REPO }} == 'Lean' ]]; then
           REPO_URL='https://github.com/coolsnowwolf/lede'
           BRANCH='main'
-        else
-          echo 'Are you kidding me?'
         fi
         git clone -b $BRANCH --single-branch --depth 1 $REPO_URL openwrt     
         cd openwrt
@@ -81,9 +80,8 @@ jobs:
       env:
         CONFIG_FILE: '${{ github.event.inputs.CONFIG_FILE }}.${{ github.event.inputs.REPO }}.config'
       run: |
-        set +e
-        [ -e $CONFIG_FILE ] && cp Config/$CONFIG_FILE openwrt/.config
-        cd openwrt && cp ../customize.sh . && sh customize.sh && make defconfig
+        [ -e $CONFIG_FILE ] && cp Config/$CONFIG_FILE openwrt/.config && cp customize.sh openwrt/
+        cd openwrt && sh customize.sh && make defconfig
 
     - name: 预下载依赖
       working-directory: ./openwrt
