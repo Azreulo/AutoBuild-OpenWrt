@@ -60,13 +60,13 @@ jobs:
 
     - name: 克隆源代码、更新feeds
       run: |
-        if [[ ${{ github.event.inputs.OPENWRT-MAINTAINER }} == 'Hanwckf' ]]; then
+        if [[ ${{ github.event.inputs.REPO }} == 'Hanwckf' ]]; then
           REPO_URL='https://github.com/hanwckf/immortalwrt-mt798x'
           BRANCH='21.02'
-        elif [[ ${{ github.event.inputs.OPENWRT-MAINTAINER }} == 'ImmortalWrt' ]]; then
+        elif [[ ${{ github.event.inputs.REPO }} == 'ImmortalWrt' ]]; then
           REPO_URL='https://github.com/immortalwrt/immortalwrt'
           BRANCH='23.05'
-        elif [[ ${{ github.event.inputs.OPENWRT-MAINTAINER }} == 'Lean' ]]; then
+        elif [[ ${{ github.event.inputs.REPO }} == 'Lean' ]]; then
           REPO_URL='https://github.com/coolsnowwolf/lede'
           BRANCH='main'
         fi
