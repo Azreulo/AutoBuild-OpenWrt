@@ -114,7 +114,7 @@ jobs:
         token: ${{ secrets.OPENWRT_RELEASE }}
         allowUpdates: true
         body: "Compiled at ${{ steps.date.outputs.date }}"
-        artifacts: openwrt/bin/targets/*/*/*.vmdk,openwrt/bin/targets/*/*/*.ubi,openwrt/bin/targets/*/*/*.bin}
+        artifacts: openwrt/bin/targets/*/*/*.vmdk,openwrt/bin/targets/*/*/*.ubi,openwrt/bin/targets/*/*/*.bin,openwrt/bin/targets/**/**/*.vmdk,openwrt/bin/targets/**/**/*.ubi,openwrt/bin/targets/**/**/*.bin
 
     - name: 删除过期工作流
       uses: Mattraks/delete-workflow-runs@main
