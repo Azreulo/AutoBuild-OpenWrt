@@ -81,8 +81,8 @@ jobs:
         CONFIG_FILE: '${{ github.event.inputs.CONFIG_FILE }}.${{ github.event.inputs.REPO }}.config'
       run: |
         [ -e $CONFIG_FILE ] && cp Config/$CONFIG_FILE openwrt/.config
-        cp ../customize.sh . && sh customize.sh        
-        cd openwrt && make defconfig
+        cp customize.sh openwrt/
+        cd openwrt && sh customize.sh && make defconfig
 
     - name: 预下载依赖
       working-directory: ./openwrt
