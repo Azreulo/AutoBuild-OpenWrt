@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set +e
 sed -i 's|192.168.1.1|10.0.0.100|' package/base-files/files/bin/config_generate #修改默认IP地址
 sed -i 's|+luci-theme-bootstrap ||' feeds/luci/collections/luci/Makefile #删除默认主题
 sed -i 's|+luci-theme-bootstrap ||' feeds/luci/collections/luci-ssl-nginx/Makefile #删除默认主题
