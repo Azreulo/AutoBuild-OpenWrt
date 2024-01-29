@@ -68,6 +68,8 @@ jobs:
         elif [[ ${{ github.event.inputs.REPO }} == 'Lean' ]]; then
           REPO_URL='https://github.com/coolsnowwolf/lede'
           BRANCH='main'
+        else
+          echo 'Are you kidding me?'
         fi
         git clone -b $BRANCH --single-branch --depth 1 $REPO_URL openwrt     
         cd openwrt
