@@ -59,8 +59,8 @@ jobs:
         #sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php
 
     - name: 克隆源代码、更新feeds
-      #env:
-        #REPO : ${{ github.event.inputs.REPO }}
+#      env:
+#        REPO : ${{ github.event.inputs.REPO }}
       run: |
         if [[ ${{ github.event.inputs.REPO }} == 'Hanwckf' ]]; then
           REPO_URL='https://github.com/hanwckf/immortalwrt-mt798x'
